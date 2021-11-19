@@ -2,41 +2,32 @@ library(shiny)
 library(dplyr)
 library(leaflet)
 
-# TODO
-# if scrolled on map and then change selectInputs, the view resets - maysbe this is ok
-# maybe it is also okay if the postcade lat lon is not zoomed in on when filtering by postcode
-# TODO: icons represent cost/accessibility
-# TODO: disttricts? collections of postcodes?
-
-# https://shiny.rstudio.com/articles/layout-guide.html
-
-# Reading in toilet data
+# Reading in toilet data:
 library("readxl")
-u <- 'https://www.berlin.de/sen/uvk/_assets/verkehr/infrastruktur/oeffentliche-toiletten/berliner-toiletten-standorte.xlsx'
-tmp <- tempfile() 
-download.file(u, tmp, mode = "wb")
+toilet_data_url <- 'https://www.berlin.de/sen/uvk/_assets/verkehr/infrastruktur/oeffentliche-toiletten/berliner-toiletten-standorte.xlsx'
+tmp <- tempfile()
+download.file(toilet_data_url, tmp, mode = "wb")
 toilet_data <- read_xlsx(tmp, skip=3)
 toilet_data <- toilet_data %>%
     mutate(Longitude = as.numeric(sub(",", ".", Longitude))) %>%
     mutate(Latitude = as.numeric(sub(",", ".", Latitude))) %>%
     mutate(isHandicappedAccessible = as.numeric(isHandicappedAccessible))
+
 # Reading in PostalCode data - used as basis for drop down menu
-u <- 'https://launix.de/launix/wp-content/uploads/2019/06/PLZ.csv'
-tmp <- tempfile() 
-download.file(u, tmp, mode = "wb")
+postcode_data_url <- 'https://launix.de/launix/wp-content/uploads/2019/06/PLZ.csv'
+tmp <- tempfile()
+download.file(postcode_data_url, tmp, mode = "wb")
 plz_data <- read.csv(tmp, sep=";", header=FALSE)
 colnames(plz_data) <- c("plz", "city", "lng", "lat")
 plz_data <- plz_data %>% filter(city=="Berlin") %>% select(-city)
 
-bound = 0.1
-
+# Choosing marker icons:
 IconSet <- awesomeIconList(
     makeAwesomeIcon(icon= 'venus-mars', library = "fa"),
     makeAwesomeIcon(icon= 'universal-access', library = "fa")
 )
 
-IconSet[1]
-
+# Defining the User Interface and page text:
 ui <- fluidPage(title = "Berlin Bathroom Beacon",
                 h2("Berlin Bathroom Beacon v1.0"),
                 h3("WC Finder: Conveniently find conveniences in your neighbourhood!"),
@@ -55,7 +46,6 @@ ui <- fluidPage(title = "Berlin Bathroom Beacon",
                      <li>Allowing search by district as well as postcode (i.e. Mitte, Neukölln)</li>
                      <li>Overlaying district and postcode boundaries on the map (shape datasets exist for this)</li>
                      </ul>"),
-
                 fluidRow(
                     column(4,
                            selectInput(
@@ -81,72 +71,68 @@ ui <- fluidPage(title = "Berlin Bathroom Beacon",
                 ),
                 leafletOutput("mymap"))
 
+# Server calculation code:
 server <- function(input, output) {
-    
     output$mymap <- renderLeaflet({
-        
         toilet_data_toDisplay <- toilet_data
-        if (input$selectedPostalCode != "All") { toilet_data_toDisplay <- toilet_data_toDisplay %>% filter(PostalCode == input$selectedPostalCode) }
-        if (input$selectedCost == "Free Only") { toilet_data_toDisplay <- toilet_data_toDisplay %>% filter(Price == "0,00") }
-        if (input$selectedCost == "Paid Only") { toilet_data_toDisplay <- toilet_data_toDisplay %>% filter(Price == "0,50") }
-        if (input$selectedAccessibility == "Accessible Only") { toilet_data_toDisplay <- toilet_data_toDisplay %>% filter(isHandicappedAccessible == TRUE) }
-        if (input$selectedAccessibility == "Non-accessible Only") { toilet_data_toDisplay <- toilet_data_toDisplay %>% filter(isHandicappedAccessible == FALSE) }
+        if (input$selectedPostalCode != "All") {
+            toilet_data_toDisplay <-
+                toilet_data_toDisplay %>% filter(PostalCode == input$selectedPostalCode)
+        }
+        if (input$selectedCost == "Free Only") {
+            toilet_data_toDisplay <-
+                toilet_data_toDisplay %>% filter(Price == "0,00")
+        }
+        if (input$selectedCost == "Paid Only") {
+            toilet_data_toDisplay <-
+                toilet_data_toDisplay %>% filter(Price == "0,50")
+        }
+        if (input$selectedAccessibility == "Accessible Only") {
+            toilet_data_toDisplay <-
+                toilet_data_toDisplay %>% filter(isHandicappedAccessible == TRUE)
+        }
+        if (input$selectedAccessibility == "Non-accessible Only") {
+            toilet_data_toDisplay <-
+                toilet_data_toDisplay %>% filter(isHandicappedAccessible == FALSE)
+        }
         leaflet(options = leafletOptions(minZoom = 10)) %>%
             # add different provider tiles
-            addProviderTiles(
-                "OpenStreetMap",
-                # give the layer a name
-                group = "OpenStreetMap"
-            ) %>%
+            addProviderTiles("OpenStreetMap",
+                             # give the layer a name
+                             group = "OpenStreetMap") %>%
             # initial setView for whole of Berlin
-            setView(
-                lng = 13.4248,
-                lat = 52.5072,
-                zoom = 10
-            ) %>%
+            setView(lng = 13.4248,
+                    lat = 52.5072,
+                    zoom = 10) %>%
             setMaxBounds(
-                lng1 = 13.4248 + bound,
-                lat1 = 52.5072 + bound,
-                lng2 = 13.4248 - bound,
-                lat2 = 52.5072 - bound
+                lng1 = 13.4248 + 0.1,
+                lat1 = 52.5072 + 0.1,
+                lng2 = 13.4248 - 0.1,
+                lat2 = 52.5072 - 0.1
             ) %>%
             addAwesomeMarkers(
-                lat=toilet_data_toDisplay$Latitude,
-                lng=toilet_data_toDisplay$Longitude,
-                icon=IconSet[toilet_data_toDisplay$isHandicappedAccessible+1]
+                lat = toilet_data_toDisplay$Latitude,
+                lng = toilet_data_toDisplay$Longitude,
+                icon = IconSet[toilet_data_toDisplay$isHandicappedAccessible +
+                                   1]
             ) %>%
-            addCircleMarkers(lat=toilet_data_toDisplay$Latitude, lng=toilet_data_toDisplay$Longitude,
-                             color="black",
-                             opacity= case_when(
-                                 toilet_data_toDisplay$Price == "0,00" ~ 0,
-                                 toilet_data_toDisplay$Price == "0,50" ~ 1
-                             ),
-                             weight=2,
-                             fillColor="gold",
-                             fillOpacity= case_when(
-                                toilet_data_toDisplay$Price == "0,00" ~ 0,
-                                toilet_data_toDisplay$Price == "0,50" ~ 1
-                            )
+            addCircleMarkers(
+                lat = toilet_data_toDisplay$Latitude,
+                lng = toilet_data_toDisplay$Longitude,
+                color = "black",
+                opacity = case_when(
+                    toilet_data_toDisplay$Price == "0,00" ~ 0,
+                    toilet_data_toDisplay$Price == "0,50" ~ 1
+                ),
+                weight = 2,
+                fillColor = "gold",
+                fillOpacity = case_when(
+                    toilet_data_toDisplay$Price == "0,00" ~ 0,
+                    toilet_data_toDisplay$Price == "0,50" ~ 1
+                )
             )
     })
 }
 
 # Run the application
 shinyApp(ui = ui, server = server)
-
-# # example setView for a specific postcode
-# setView(
-#     testplz$lng,
-#     testplz$lat,
-#     zoom = 13
-# ) %>%
-
-# # Filtering by Postcode
-# toilet_data_toDisplay <- toilet_data %>% filter(PostalCode == "10117")
-# # Filtering by Cost
-# toilet_data_toDisplay <- toilet_data %>% filter(Price == "0,00")
-# toilet_data_toDisplay <- toilet_data %>% filter(Price == "0,50")
-# # Filtering by Accessibility
-# toilet_data_toDisplay <- toilet_data %>% filter(isHandicappedAccessible == TRUE)
-# toilet_data_toDisplay <- toilet_data %>% filter(isHandicappedAccessible == FALSE)
-# # Handling 'all' means not filtering
