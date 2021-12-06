@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Berlin Bathroom Beacon</title>
+  <meta charset="utf-8">
+  <meta name="description" content="Berlin Bathroom Beacon">
+  <meta name="author" content="Graham Booth">
+  <meta name="generator" content="slidify" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/default.css" media="all" >
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/phone.css" 
+    media="only screen and (max-device-width: 480px)" >
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/slidify.css" >
+  <link rel="stylesheet" href="libraries/highlighters/highlight.js/css/tomorrow.css" />
+  <base target="_blank"> <!-- This amazingness opens all links in a new tab. -->  <link rel=stylesheet href="./assets/css/ribbons.css"></link>
+
+  
+  <!-- Grab CDN jQuery, fall back to local if offline -->
+  <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.min.js"></script>
+  <script>window.jQuery || document.write('<script src="libraries/widgets/quiz/js/jquery.js"><\/script>')</script> 
+  <script data-main="libraries/frameworks/io2012/js/slides" 
+    src="libraries/frameworks/io2012/js/require-1.0.8.min.js">
+  </script>
+  
+  
+
+</head>
+<body style="opacity: 0">
+  <slides class="layout-widescreen">
+    
+    <!-- LOGO SLIDE -->
+        <slide class="title-slide segue nobackground">
+  
+  <hgroup class="auto-fadein">
+    <h1>Berlin Bathroom Beacon</h1>
+    <h2>Reproducible Pitch Presentation</h2>
+    <p>Graham Booth<br/>Coursera / John Hopkins University &quot;Data Science Specialisation&quot; Candidate</p>
+  </hgroup>
+  
+  <article></article>  
+  
+</slide>
+    
+
+    <!-- SLIDES -->
+    <slide class="" id="slide-1" style="background:;">
+  
+  <article data-timings="">
+    <style>
+em {
+  font-style: italic
+}
+
+strong {
+  font-weight: bold;
+}
+
+sup {
+  top: -0.5em;
+  vertical-align: baseline;
+  font-size: 75%;
+  line-height: 0;
+  position: relative;
+}
+</style>
+
+<h2>Aims of the Project</h2>
+
+<p><br>
+The Berlin Bathroom Beacon aims to:</p>
+
+<ul>
+<li>make use of freely available location data about public toilets in Berlin</li>
+<li>bring this to the fingertips of the public...when they need it most!</li>
+</ul>
+
+<p><br></p>
+
+<p>Our initial survey found that the most important factors when using a public bathroom are:</p>
+
+<ol>
+<li>How close is it to my current location?</li>
+<li>What are the facilities like? Are they accessible?</li>
+<li>Are the facilities free or paid?<br>
+(some preferred the former,<br>
+whilst others considered paid facilities to be cleaner or better maintained)</li>
+</ol>
+
+<p>Our web-based app focuses on bringing these three attributes to users simply and efficiently.</p>
+
+  </article>
+  <!-- Presenter Notes -->
+  
+</slide>
+
+<slide class="class" id="id" style="background:;">
+  
+  <hgroup>
+    <h2>The Data</h2>
+  </hgroup>
+  
+  <article data-timings="">
+    <ul>
+<li>Our app uses a publicly available <a href="https://daten.berlin.de/datensaetze/standorte-der-%C3%B6ffentlichen-toiletten">dataset</a> as part of the Berlin Open Data project</li>
+<li>The licence allows the data to be used for commercial purposes<br>
+(Only a simple attribution must be given i.e. copyright/rights notice and a link to the license)</li>
+</ul>
+
+<p>The data contains the following attributes:</p>
+
+<ul>
+<li><em>LavatoryID, Description, City, Street, Number, PostalCode, Country, Longitude, Latitude, isOwnedByWall, isHandicappedAccessible, Price, canBePayedWithCoins, canBePayedInApp, canBePayedWithNFC, hasChangingTable, LabelID, hasUrinal</em></li>
+</ul>
+
+<p>Of which we used:</p>
+
+<ul>
+<li><em>PostalCode, Longitude, Latitude, isHandicappedAccessible, Price</em></li>
+</ul>
+
+<p>You can see there is plenty of room in the data to add more features to the app as it matures...</p>
+
+  </article>
+  <!-- Presenter Notes -->
+  
+</slide>
+
+<slide class="class" id="id" style="background:;">
+  
+  <hgroup>
+    <h2>Demo of the App</h2>
+  </hgroup>
+  
+  <article data-timings="">
+    <p><img src="BBB-screenshot.png" alt="drawing" style="height:450px;"/></p>
+
+<p>Click <a href="https://sidechained.shinyapps.io/ddp_shiny/">here</a> to open the app in your browser and <a href="https://github.com/sidechained/DDP-Assignment-Week-4">here</a> to see the code on github </p>
+
+  </article>
+  <!-- Presenter Notes -->
+  
+</slide>
+
+<slide class="class" id="id" style="background:;">
+  
+  <hgroup>
+    <h2>Conclusion / Improvments for V1.1</h2>
+  </hgroup>
+  
+  <article data-timings="">
+    <p>V1.0 is a simple working prototype...our work goes on!</p>
+
+<p>Forthcoming improvements in v1.1 include:</p>
+
+<ul>
+<li>Addition of a &quot;closest to me&quot; function and links to Google/Apple Maps navigation</li>
+<li>Better icons for differentiating facilities<br>
+<em>(e.g. gender neutrality, has urinal or not)</em></li>
+<li>Allowing search by district as well as postcode<br>
+<em>(i.e. Mitte, Neukölln)</em></li>
+<li>Overlaying district and postcode boundaries on the map<br>
+<em>(open source shape datasets exist for this)</em></li>
+</ul>
+
+<p>Thanks for your consideration - we look forward to your support!</p>
+
+  </article>
+  <!-- Presenter Notes -->
+  
+</slide>
+
+    <slide class="backdrop"></slide>
+  </slides>
+  <div class="pagination pagination-small" id='io2012-ptoc' style="display:none;">
+    <ul>
+      
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=1 title='NA'>
+         1
+      </a>
+    </li>
+    
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=2 title='The Data'>
+         2
+      </a>
+    </li>
+    
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=3 title='Demo of the App'>
+         3
+      </a>
+    </li>
+    
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=4 title='Conclusion / Improvments for V1.1'>
+         4
+      </a>
+    </li>
+    
+    </ul>
+  </div>  <!--[if IE]>
+    <script 
+      src="http://ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js">  
+    </script>
+    <script>CFInstall.check({mode: 'overlay'});</script>
+  <![endif]-->
+</body>
+  <!-- Load Javascripts for Widgets -->
+  
+  <!-- LOAD HIGHLIGHTER JS FILES -->
+  <script src="libraries/highlighters/highlight.js/highlight.pack.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+  <!-- DONE LOADING HIGHLIGHTER JS FILES -->
+   
+  </html>
